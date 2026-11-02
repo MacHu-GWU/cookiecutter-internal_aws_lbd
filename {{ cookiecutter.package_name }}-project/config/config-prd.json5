@@ -1,0 +1,11 @@
+// Settings of the prd environment; overrides config-shared.json5.
+{
+  // The region this environment deploys to; aws_account_id is in the -secret file.
+  aws_region: "{{ cookiecutter.aws_region }}",
+  // Pre-existing data bucket of the account of this environment; this project
+  // only uses projects/<project>/envs/prd/ in it.
+  s3_bucket_data: "{{ cookiecutter.aws_account_prefix }}-prod-{{ cookiecutter.aws_region }}-data",
+  // The Lambda layer version this environment uses. mise run lambda-layer-deploy
+  // prints the latest one; bump it here, then mise run cdk-up-prd-all.
+  lambda_layer_version: 1,
+}

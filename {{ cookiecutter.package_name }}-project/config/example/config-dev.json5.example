@@ -1,0 +1,12 @@
+// Copy to config/config-dev.json5 (committed; same for tst / prd) and fill in real values.
+// Settings of one environment; overrides config-shared.json5.
+{
+  // The region this environment deploys to; aws_account_id is in the -secret file.
+  aws_region: "us-east-1",
+  // Pre-existing data bucket of the account of this environment; this project
+  // only uses projects/<project>/envs/<env>/ in it.
+  s3_bucket_data: "my-data-bucket",
+  // The Lambda layer version this environment uses. mise run lambda-layer-deploy
+  // prints the latest one; set it here, then mise run cdk-up-<env>-all.
+  lambda_layer_version: 1,
+}

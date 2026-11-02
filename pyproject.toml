@@ -1,0 +1,43 @@
+# ==============================================================================
+# The tpl repo of a cookiecutter template. It is not a Python package: this
+# file only records the template's version and pins the dependencies of the
+# maintenance scripts in .mise/tasks/.
+#
+# Spec: .claude/skills/cctpl-base-cn/references/08-versioning-and-release.md
+# ==============================================================================
+[project]
+name = "cookiecutter_internal_aws_lbd"
+# A copy of the seed's version: seed and tpl share one version, and the seed's
+# pyproject.toml is its only source. Never edit it here: `mise run sync` writes
+# it here, into uv.lock, cookiecutter.json (_template_version) and README.rst.
+version = "1.0.0"
+description = "Cookiecutter template for internal proprietary AWS Lambda projects deployed with AWS CDK, with private packages from AWS CodeArtifact"
+license = "MIT"
+license-files = ["LICENSE.txt", "AUTHORS.rst"]
+authors = [
+    { name = "Sanhe Hu", email = "husanhe@gmail.com" },
+]
+maintainers = [
+    { name = "Sanhe Hu", email = "husanhe@gmail.com" },
+]
+readme = "README.rst"
+requires-python = ">=3.11,<4.0"
+
+# Direct imports of .mise/tasks/
+dependencies = [
+    "cookiecutter>=2.6.0,<3.0.0",
+    "cookiecutter_maker>=1.1.0,<2.0.0",
+    "pygithub_mate>=0.1.1,<1.0.0",
+    "jinja2>=3.1.0,<4.0.0", # renders README.rst
+    "pathspec>=0.12.0,<2.0.0", # matches EXCLUDE in check-roundtrip
+]
+
+[project.urls]
+Homepage = "https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd"
+Repository = "https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd"
+Issues = "https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd/issues"
+Changelog = "https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd/blob/main/release-history.rst"
+
+[tool.uv]
+# Only a virtual environment for the scripts; never build or install this repo.
+package = false

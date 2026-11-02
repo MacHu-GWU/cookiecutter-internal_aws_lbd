@@ -1,0 +1,18 @@
+{
+    "github_username": "easyscalecloud",
+    "author": "Sanhe Hu",
+    "author_email": "sanhehu@easyscalecloud.com",
+    "github_token_field": "github.accounts.sh.users.sh.secrets.dev.value",
+    "cloudflare_token_field": "cloudflare.accounts.esc.users.sh_esc.secrets.cloudflare_pages_upload.value",
+    "aws_account_prefix": "esc-app",
+    "devops_aws_account_id": "982534387049",
+    "aws_codeartifact_profile": "esc_app_devops_us_east_1",
+    "doc_host_aws_profile": "esc_app_devops_us_east_1",
+    "doc_host_s3_bucket": "esc-app-devops-us-east-1-doc-host",
+    "aws_codeartifact_domain": "esc",
+    "aws_codeartifact_repository": "esc-python",
+    "aws_github_oidc_role_name": "ghoidc-esc_aws_codeartifacts_only-devops-us-east-1",
+    "dev_aws_account_id": "361769586364",
+    "tst_aws_account_id": "539247469061",
+    "prd_aws_account_id": "971422713359"
+}

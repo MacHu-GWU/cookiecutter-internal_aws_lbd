@@ -1,0 +1,19 @@
+// Copy to config/config-shared.json5 and fill in real values (committed).
+// Settings shared by every environment. Every key must be a field of Config (config_00_main.py).
+{
+  // Every AWS resource name derives from this, such as the stack name prefix.
+  project_name: "my_project",
+  // Artifacts bucket of the DEVOPS account, where the Lambda layer is built into;
+  // its account id is in config-shared-secret.json5.
+  devops_s3_bucket_artifacts: "my-devops-artifacts-bucket",
+  // Lambda Python version, also the Python the layer is built for.
+  lambda_python_version: "3.12",
+  // true: build the layer in the AWS SAM image (needs Docker). Only needed when
+  // a dependency ships source only and has C extensions.
+  lambda_layer_build_in_container: false,
+  // Every Lambda function, by short name; the name is <project>-<env>-<short name>.
+  // handler is an attribute of <package_name>/lambda_function.py. One sample here.
+  lambda_functions: {
+    hello: {handler: "hello_handler", timeout: 3, memory: 128},
+  },
+}

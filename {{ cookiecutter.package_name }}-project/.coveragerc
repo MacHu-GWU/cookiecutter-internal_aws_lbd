@@ -1,0 +1,32 @@
+# Coverage.py is a tool for measuring code coverage of Python programs.
+# for more info: https://coverage.readthedocs.io/en/latest/config.html
+[run]
+omit =
+    {{ cookiecutter.package_name }}/docs/*
+    {{ cookiecutter.package_name }}/tests/*
+    {{ cookiecutter.package_name }}/vendor/*
+    {{ cookiecutter.package_name }}/paths.py
+    # only imports the handlers
+    {{ cookiecutter.package_name }}/lambda_function.py
+    # only testable against a deployed stack, see tests_int/
+    {{ cookiecutter.package_name }}/cdk/stacks/*_stack_exports.py
+    # dev tooling; tests/cdk/test_cdk_mise_tasks.py only checks mise.toml is current
+    {{ cookiecutter.package_name }}/cdk/mise_tasks.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if 0:
+    if __name__ == .__main__.:

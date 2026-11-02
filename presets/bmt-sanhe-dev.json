@@ -1,0 +1,18 @@
+{
+    "github_username": "bunnymantech",
+    "author": "Sanhe Hu",
+    "author_email": "sanhehu@bunnymantech.com",
+    "github_token_field": "github.accounts.sh.users.sh.secrets.dev.value",
+    "cloudflare_token_field": "cloudflare.accounts.bmt.users.sh_bmt.secrets.cloudflare_pages_upload.value",
+    "aws_account_prefix": "bmt-app",
+    "devops_aws_account_id": "862612136886",
+    "aws_codeartifact_profile": "bmt_app_devops_us_east_1",
+    "doc_host_aws_profile": "bmt_app_devops_us_east_1",
+    "doc_host_s3_bucket": "bmt-app-devops-us-east-1-doc-host",
+    "aws_codeartifact_domain": "bmt",
+    "aws_codeartifact_repository": "bmt_python",
+    "aws_github_oidc_role_name": "ghoidc-bmt_aws_codeartifacts_only-devops-us-east-1",
+    "dev_aws_account_id": "878625312159",
+    "tst_aws_account_id": "794368046103",
+    "prd_aws_account_id": "216242137773"
+}

@@ -1,0 +1,21 @@
+// Settings shared by every environment. Overridden by config-<env>.json5.
+// Shape and docs of every file: config/example/. Fields: Config in config_00_main.py.
+// The merged config of an environment is also what the Lambda functions see,
+// through SSM (mise run config-deploy-<env>).
+{
+  // Every AWS resource name derives from this, such as the stack name prefix.
+  project_name: "{{ cookiecutter.package_name }}",
+  // The DEVOPS account owns the Lambda layer; its id is in config-shared-secret.json5.
+  devops_s3_bucket_artifacts: "{{ cookiecutter.aws_account_prefix }}-devops-{{ cookiecutter.aws_region }}-artifacts",
+  // Lambda Python version, also the Python the layer is built for.
+  lambda_python_version: "3.12",
+  // true: build the layer in the AWS SAM image (needs Docker). Only needed when
+  // a dependency ships source only and has C extensions.
+  lambda_layer_build_in_container: false,
+  // Every Lambda function, by short name; the name is <project>-<env>-<short name>.
+  // handler is an attribute of {{ cookiecutter.package_name }}/lambda_function.py.
+  lambda_functions: {
+    hello: {handler: "hello_handler", timeout: 3, memory: 128},
+    s3sync: {handler: "s3sync_handler", timeout: 10, memory: 256},
+  },
+}

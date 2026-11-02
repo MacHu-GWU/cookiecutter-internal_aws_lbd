@@ -1,0 +1,237 @@
+# ==============================================================================
+# CI Workflow - Tool Management Strategy
+# ==============================================================================
+#
+# PRINCIPLE: Use dedicated GitHub Actions for tools that have official actions
+# with built-in caching. Use mise only for tools without good GA equivalents.
+# Use `mise run <task>` for all task execution (replaces old bin/ scripts).
+#
+# TOOL OWNERSHIP:
+#
+#   GitHub Actions managed (with caching):
+#     - mise          → jdx/mise-action@v4
+#     - Python        → actions/setup-python  (matrix support, pip cache)
+#     - uv            → astral-sh/setup-uv    (has its own cache layer)
+#     - Node.js       → actions/setup-node    (npm cache)
+#     - AWS identity  → aws-actions/configure-aws-credentials (OIDC, not a tool)
+#     - .venv         → actions/cache         (cache uv sync result)
+#
+#   Preinstalled on the runner image:
+#     - awscli        → only codeartifact-env.sh calls it, for the CodeArtifact token.
+#
+#   Not needed in CI:
+#     - npm:aws-cdk   → the unit tests synthesize the stacks in Python and never
+#                       call the cdk CLI; nothing in CI deploys a stack.
+#
+#   mise managed (CI uses mise install):
+#     - pandoc        → no GA action supports version pinning; mise guarantees
+#                       same version as local. Only installed on deploy-doc job
+#                       via `install_args: "pandoc"`.
+#
+#   Installed manually in CI:
+#     - wrangler      → `npm install -g wrangler` after actions/setup-node.
+#                       mise manages it as "npm:wrangler" which ties installation
+#                       to mise's own node. Since we skip mise's node, using
+#                       explicit npm install is simpler and reliable.
+#                       Only installed on deploy-doc job.
+#
+# MISE INSTALL STRATEGY (avoids unreliable MISE_DISABLE_TOOLS):
+#   test job:       install: "false"          → mise installs nothing, just runs tasks
+#   deploy-doc:     install_args: "pandoc"    → mise installs only pandoc
+#
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: ["main", "doc"]
+  pull_request:
+    branches: ["main", "doc"]
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # Required for AWS OIDC token request
+  contents: read   # Required for actions/checkout
+
+# Secrets are injected here so mise.toml's tera templates see them as env vars
+# and the `| default(value=exec(...))` pattern skips hst execution in CI.
+# See mise.toml [env] section for the template definitions.
+env:
+  GITHUB_TOKEN: ${% raw %}{{{% endraw %} secrets.GITHUB_TOKEN {% raw %}}}{% endraw %}
+  DEVOPS_AWS_ACCOUNT_ID: ${% raw %}{{{% endraw %} secrets.DEVOPS_AWS_ACCOUNT_ID {% raw %}}}{% endraw %}
+  CLOUDFLARE_API_TOKEN: ${% raw %}{{{% endraw %} secrets.CLOUDFLARE_API_TOKEN {% raw %}}}{% endraw %}
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Job 1: Unit tests + coverage
+  # Runs on: all branches (main, doc, PRs)
+  # ----------------------------------------------------------------------------
+  test:
+    name: "🧪 Test ${% raw %}{{{% endraw %} matrix.os {% raw %}}}{% endraw %} Python ${% raw %}{{{% endraw %} matrix.python-version {% raw %}}}{% endraw %}"
+    runs-on: "${% raw %}{{{% endraw %} matrix.os {% raw %}}}{% endraw %}"
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.12"]  # Must match mise.toml `python = "3.12"`
+    env:
+      # Set at job level so it applies to ALL steps including `mise run` calls.
+      # `install: false` on mise-action only skips the action step itself;
+      # mise still auto-installs missing tools when running tasks. Job-level
+      # MISE_DISABLE_TOOLS prevents that for all tools not needed in tests.
+      # Tool names must match mise's internal naming exactly.
+      # npm packages use the "npm:<name>" prefix (e.g. npm:wrangler, not wrangler).
+      MISE_DISABLE_TOOLS: "python,uv,node,pandoc,awscli,claude,npm:aws-cdk,npm:wrangler"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # --- Tool setup (GitHub Actions managed) --------------------------------
+
+      - name: Setup Python ${% raw %}{{{% endraw %} matrix.python-version {% raw %}}}{% endraw %}
+        uses: actions/setup-python@v7
+        id: setup-python
+        with:
+          python-version: "${% raw %}{{{% endraw %} matrix.python-version {% raw %}}}{% endraw %}"
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10.3.0 # no floating major tag, pin the full version
+        with:
+          # The .venv cache below makes uv's own cache redundant; with both on,
+          # reruns warn "Unable to reserve cache ... another job may be creating this cache".
+          enable-cache: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"  # Must match mise.toml `node = "24"`
+
+      - name: Setup mise
+        uses: jdx/mise-action@v4
+
+      # --- AWS credentials (OIDC) ---------------------------------------------
+      # Must come before `mise run inst`: on a .venv cache miss its offline sync fails,
+      # and it runs codeartifact-env.sh, which calls `aws codeartifact get-authorization-token`.
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${% raw %}{{{% endraw %} secrets.DEVOPS_AWS_ACCOUNT_ID {% raw %}}}{% endraw %}:role/{{ cookiecutter.aws_github_oidc_role_name }}
+          role-session-name: devops_role_session
+          aws-region: {{ cookiecutter.aws_region }}
+          disable-retry: true
+          account-id-allowlist: ${% raw %}{{{% endraw %} secrets.DEVOPS_AWS_ACCOUNT_ID {% raw %}}}{% endraw %}
+
+      # --- Dependency installation --------------------------------------------
+
+      # The key uses the FULL Python version (e.g. 3.12.13) from setup-python: a .venv points at
+      # its interpreter's path, so a venv cached under an older patch release breaks
+      # ("linked to non-existent Python interpreter") when the runner image moves on.
+      - name: Cache .venv
+        uses: actions/cache@v6
+        id: cache-venv
+        with:
+          path: .venv
+          key: venv-${% raw %}{{{% endraw %} runner.os {% raw %}}}{% endraw %}-${% raw %}{{{% endraw %} steps.setup-python.outputs.python-version {% raw %}}}{% endraw %}-${% raw %}{{{% endraw %} hashFiles('uv.lock') {% raw %}}}{% endraw %}
+
+      - name: Install dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: mise run inst
+
+      # --- Tests --------------------------------------------------------------
+
+      - name: Run tests with coverage
+        run: mise run cov
+
+  # ----------------------------------------------------------------------------
+  # Job 2: Build and deploy documentation to Cloudflare Pages
+  # Runs on: doc branch push only
+  # Depends on: test job must pass first
+  # ----------------------------------------------------------------------------
+  deploy-doc:
+    name: "📚 Deploy Documentation"
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/doc' && github.event_name == 'push'
+    env:
+      # Job-level MISE_DISABLE_TOOLS so mise never auto-installs these during
+      # `mise run` calls. pandoc is intentionally excluded from this list →
+      # mise installs it via `install_args: "pandoc"` in the mise-action step.
+      # wrangler is excluded too → installed via `npm install -g wrangler` below.
+      # pandoc is intentionally excluded → mise installs it via install_args.
+      # npm packages use the "npm:<name>" prefix.
+      MISE_DISABLE_TOOLS: "python,uv,node,awscli,claude,npm:aws-cdk,npm:wrangler"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # --- Tool setup (GitHub Actions managed) --------------------------------
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v7
+        id: setup-python
+        with:
+          python-version: "3.12"
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10.3.0 # no floating major tag, pin the full version
+        with:
+          # The .venv cache below makes uv's own cache redundant; with both on,
+          # reruns warn "Unable to reserve cache ... another job may be creating this cache".
+          enable-cache: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Setup mise (install pandoc only)
+        uses: jdx/mise-action@v4
+        with:
+          # install_args: "pandoc" → mise installs only pandoc (version pinned in mise.toml).
+          # python, uv, node come from GitHub Actions steps above.
+          # wrangler is installed separately via npm below.
+          install_args: "pandoc"
+
+      # --- Wrangler (explicit npm install) ------------------------------------
+      # Not managed by mise because mise's npm: backend uses mise's own node,
+      # which conflicts with the node already provided by actions/setup-node.
+      # npm is available in PATH after actions/setup-node.
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      # --- AWS credentials (OIDC) ---------------------------------------------
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::${% raw %}{{{% endraw %} secrets.DEVOPS_AWS_ACCOUNT_ID {% raw %}}}{% endraw %}:role/{{ cookiecutter.aws_github_oidc_role_name }}
+          role-session-name: devops_role_session
+          aws-region: {{ cookiecutter.aws_region }}
+          disable-retry: true
+          account-id-allowlist: ${% raw %}{{{% endraw %} secrets.DEVOPS_AWS_ACCOUNT_ID {% raw %}}}{% endraw %}
+
+      # --- Dependency installation --------------------------------------------
+
+      # The key uses the FULL Python version (e.g. 3.12.13) from setup-python: a .venv points at
+      # its interpreter's path, so a venv cached under an older patch release breaks
+      # ("linked to non-existent Python interpreter") when the runner image moves on.
+      - name: Cache .venv
+        uses: actions/cache@v6
+        id: cache-venv
+        with:
+          path: .venv
+          key: venv-${% raw %}{{{% endraw %} runner.os {% raw %}}}{% endraw %}-${% raw %}{{{% endraw %} steps.setup-python.outputs.python-version {% raw %}}}{% endraw %}-${% raw %}{{{% endraw %} hashFiles('uv.lock') {% raw %}}}{% endraw %}
+
+      - name: Install dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: mise run inst
+
+      # --- Build and deploy ---------------------------------------------------
+
+      - name: Build documentation
+        run: mise run build-doc
+
+      - name: Deploy to Cloudflare Pages
+        run: mise run deploy-pages

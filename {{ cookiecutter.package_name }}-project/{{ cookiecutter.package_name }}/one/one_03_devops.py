@@ -28,6 +28,7 @@ from ..lazy_imports import aws_lbd_art_builder_uv
 from ..lazy_imports import aws_lbd_art_builder_core
 
 if T.TYPE_CHECKING:  # pragma: no cover
+    from mypy_boto3_ssm.client import SSMClient
     from .one_00_main import One
 
 
@@ -112,6 +113,71 @@ def build_lambda_source(dir_build: Path = path_enum.dir_build_lambda_source_buil
     )
 
 
+def deploy_config(
+    config: Config,
+    ssm_client: SSMClient,
+) -> str:
+    """
+    Write the whole config as JSON to its SSM parameter,
+    :attr:`~{{ cookiecutter.package_name }}.config.config_01_name.ConfigNameMixin.ssm_param_name_config`,
+    a ``SecureString``, only when the parameter is missing or differs.
+
+    :param ssm_client: an SSM client of the account of ``config``.
+
+    :returns: ``"created"``, ``"updated"``, or ``"unchanged"``.
+    """
+    ssm = simple_aws_ssm_parameter_store
+    value = config.model_dump_json()
+    before, after = ssm.put_parameter_if_changed(
+        ssm_client=ssm_client,
+        name=config.ssm_param_name_config,
+        value=value,
+        type=ssm.ParameterType.SECURE_STRING,
+        tier=ssm.ParameterTier.INTELLIGENT_TIERING,
+    )
+    if before is None:
+        status = "created"
+        detail = f"version {after.version}"
+    elif after is None:
+        status = "unchanged"
+        detail = f"version {before.version}, nothing written"
+    else:
+        status = "updated"
+        detail = f"version {before.version} -> {after.version}"
+    print(
+        f"Config of {config.env_name!r} {status} ({detail}, {len(value)} bytes): "
+        f"SSM parameter {config.ssm_param_name_config}"
+    )
+    print(f"  {config.ssm_param_url_config}")
+    return status
+
+
+def delete_config(
+    config: Config,
+    ssm_client: SSMClient,
+) -> bool:
+    """
+    Delete the SSM parameter of :func:`deploy_config`; ``cdk-down`` does not.
+    The functions of this environment fail after this. A missing parameter
+    is not an error.
+
+    :param ssm_client: an SSM client of the account of ``config``.
+
+    :returns: ``True`` if it was deleted, ``False`` if it did not exist.
+    """
+    deleted = simple_aws_ssm_parameter_store.delete_parameter(
+        ssm_client=ssm_client,
+        name=config.ssm_param_name_config,
+    )
+    status = "deleted" if deleted else "not found, nothing deleted"
+    print(
+        f"Config of {config.env_name!r} {status}: "
+        f"SSM parameter {config.ssm_param_name_config}"
+    )
+    print(f"  {config.ssm_param_url_config}")
+    return deleted
+
+
 class OneDevOpsMixin:
     """
     Config, Lambda layer, and Lambda source deployment.
@@ -120,60 +186,35 @@ class OneDevOpsMixin:
     # --------------------------------------------------------------------------
     # Config
     # --------------------------------------------------------------------------
+    def deploy_config_for_env(self: One, env_name: str) -> str:  # pragma: no cover
+        """
+        :func:`deploy_config` for any workload environment: its local config
+        files, written with its own AWS profile ``AWS_PROFILE_FOR_<ENV>``.
+        """
+        config = Config.load_from_local_config_file(env_name=env_name)
+        bsm = self._new_bsm(env_name, region_name=config.aws_region)
+        return deploy_config(config=config, ssm_client=bsm.ssm_client)
+
+    def delete_config_for_env(self: One, env_name: str) -> bool:  # pragma: no cover
+        """
+        :func:`delete_config` for any workload environment, like
+        :meth:`deploy_config_for_env`.
+        """
+        config = Config.load_from_local_config_file(env_name=env_name)
+        bsm = self._new_bsm(env_name, region_name=config.aws_region)
+        return delete_config(config=config, ssm_client=bsm.ssm_client)
+
     def deploy_config(self: One) -> str:
         """
-        Write the whole config of the current environment as JSON to its SSM
-        parameter, :attr:`~{{ cookiecutter.package_name }}.config.config_01_name.ConfigNameMixin.ssm_param_name_config`,
-        a ``SecureString``, only when the parameter is missing or differs.
-
-        :returns: ``"created"``, ``"updated"``, or ``"unchanged"``.
+        :func:`deploy_config` for the current environment.
         """
-        ssm = simple_aws_ssm_parameter_store
-        config = self.config
-        value = config.model_dump_json()
-        before, after = ssm.put_parameter_if_changed(
-            ssm_client=self.ssm_client,
-            name=config.ssm_param_name_config,
-            value=value,
-            type=ssm.ParameterType.SECURE_STRING,
-            tier=ssm.ParameterTier.INTELLIGENT_TIERING,
-        )
-        if before is None:
-            status = "created"
-            detail = f"version {after.version}"
-        elif after is None:
-            status = "unchanged"
-            detail = f"version {before.version}, nothing written"
-        else:
-            status = "updated"
-            detail = f"version {before.version} -> {after.version}"
-        print(
-            f"Config of {config.env_name!r} {status} ({detail}, {len(value)} bytes): "
-            f"SSM parameter {config.ssm_param_name_config}"
-        )
-        print(f"  {config.ssm_param_url_config}")
-        return status
+        return deploy_config(config=self.config, ssm_client=self.ssm_client)
 
     def delete_config(self: One) -> bool:
         """
-        Delete the SSM parameter of :meth:`deploy_config`; ``cdk-down`` does not.
-        The functions of this environment fail after this. A missing parameter
-        is not an error.
-
-        :returns: ``True`` if it was deleted, ``False`` if it did not exist.
+        :func:`delete_config` for the current environment.
         """
-        config = self.config
-        deleted = simple_aws_ssm_parameter_store.delete_parameter(
-            ssm_client=self.ssm_client,
-            name=config.ssm_param_name_config,
-        )
-        status = "deleted" if deleted else "not found, nothing deleted"
-        print(
-            f"Config of {config.env_name!r} {status}: "
-            f"SSM parameter {config.ssm_param_name_config}"
-        )
-        print(f"  {config.ssm_param_url_config}")
-        return deleted
+        return delete_config(config=self.config, ssm_client=self.ssm_client)
 
     # --------------------------------------------------------------------------
     # Layer

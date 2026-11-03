@@ -44,10 +44,15 @@ class OneBotoSesMixin:
     Lazily built boto sessions and AWS clients.
     """
 
-    def _new_bsm(self: One, name: str) -> BotoSesManager:  # pragma: no cover
+    def _new_bsm(
+        self: One,
+        env_name: str,
+        region_name: str | None = None,
+    ) -> BotoSesManager:  # pragma: no cover
         """
         On the local runtime use the profile ``AWS_PROFILE_FOR_<NAME>`` when it is
-        set. Otherwise use the default credential chain.
+        set. Otherwise use the default credential chain. The region is
+        ``region_name``, by default the one of the current config.
 
         Inside Lambda it reads nothing from the config: the region and the
         credentials (the execution role) come from the Lambda environment. The
@@ -57,12 +62,14 @@ class OneBotoSesMixin:
         runtime_name = self.runtime.current_runtime_name()
         if runtime_name == RuntimeNameEnum.aws_lambda.value:
             return BotoSesManager()
-        region_name = self.config.aws_region
+        if region_name is None:
+            region_name = self.config.aws_region
         if runtime_name == RuntimeNameEnum.local.value:
-            profile_name = os.environ.get(get_aws_profile_env_var(name), "")
+            profile_name = os.environ.get(get_aws_profile_env_var(env_name), "")
             if profile_name:
                 return BotoSesManager(
-                    profile_name=profile_name, region_name=region_name
+                    profile_name=profile_name,
+                    region_name=region_name,
                 )
         return BotoSesManager(region_name=region_name)
 

@@ -4,7 +4,7 @@ description: "The Lambda layer: built from [project] dependencies and uv.lock wi
 
 # Lambda Layer
 
-Seed repo: [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py), [`constants.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/constants.py), [`config/config-shared.json5`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/config/config-shared.json5).
+Seed repo: [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py), [`constants.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/constants.py), [`config/config-shared.json5`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/config/config-shared.json5).
 
 ---
 

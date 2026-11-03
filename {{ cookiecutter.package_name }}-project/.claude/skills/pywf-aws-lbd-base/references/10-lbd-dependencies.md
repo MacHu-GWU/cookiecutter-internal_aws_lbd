@@ -4,7 +4,7 @@ description: "What may run inside Lambda: the [project] dependencies are exactly
 
 # Lambda Dependencies and Imports
 
-Seed repo: [`pyproject.toml`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/pyproject.toml), [`lazy_imports.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/lazy_imports.py).
+Seed repo: [`pyproject.toml`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/pyproject.toml), [`lazy_imports.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/lazy_imports.py).
 
 ---
 

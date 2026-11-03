@@ -4,7 +4,7 @@ description: "The devops environment: a member of EnvNameEnum that is not a work
 
 # The devops Environment
 
-Seed repo: [`env.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/env.py), [`one/one_02_boto_ses.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/one/one_02_boto_ses.py), [`.env.example`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/.env.example).
+Seed repo: [`env.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/env.py), [`one/one_02_boto_ses.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/one/one_02_boto_ses.py), [`.env.example`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/.env.example).
 
 ---
 

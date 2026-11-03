@@ -4,7 +4,7 @@ description: "The <x>_stack_exports.py module every stack with outputs has: a st
 
 # Stack Exports
 
-Seed repo: [`infra_stack_exports.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/infra_stack_exports.py), [its test](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/tests_int/test_cdk_stacks_infra_stack_exports.py).
+Seed repo: [`infra_stack_exports.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/infra_stack_exports.py), [its test](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/tests_int/test_cdk_stacks_infra_stack_exports.py).
 
 ---
 

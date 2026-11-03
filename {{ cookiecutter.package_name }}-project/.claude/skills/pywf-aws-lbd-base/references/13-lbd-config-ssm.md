@@ -4,7 +4,7 @@ description: "How a Lambda function gets its config: config-deploy-<env> writes 
 
 # Lambda Config in SSM
 
-Seed repo: [`config/config_00_main.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/config/config_00_main.py), [`one/one_01_config.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/one/one_01_config.py), [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py).
+Seed repo: [`config/config_00_main.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/config/config_00_main.py), [`one/one_01_config.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/one/one_01_config.py), [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py).
 
 ---
 
@@ -16,7 +16,7 @@ The config is edited only in `config/*.json5` (`07-config-load.md`). Each worklo
 
 ## 2. Deploying the copy
 
-`mise run config-deploy-<env>` (`config-deploy-all` for every workload), `one.deploy_config()`:
+`mise run config-deploy-<env>` (`config-deploy-all` for every workload), `one.deploy_config()`. The work is in the function `deploy_config(config, ssm_client)` of `one_03_devops.py`; `one.deploy_config()` passes it the current environment's config and SSM client, and `one.deploy_config_for_env(env_name)` the local config and AWS profile of any environment. `delete_config` follows the same pattern:
 
 - **Only when it changed:** `put_parameter_if_changed` of `simple_aws_ssm_parameter_store` writes only when the parameter is missing or its value differs. An unchanged config writes nothing and does not use up one of the 100 versions SSM keeps, so every `cdk-up` can deploy it safely.
 - **`SecureString`,** because the `-secret` values are in it; tier `Intelligent-Tiering`, which turns advanced (8 KB) only when the value outgrows 4 KB. A unit test keeps each environment's JSON under 3000 bytes as an early warning.

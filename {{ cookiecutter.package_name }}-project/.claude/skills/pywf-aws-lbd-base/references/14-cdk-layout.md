@@ -11,7 +11,7 @@ description: "Where CDK code lives: everything in <package_name>/cdk/, one stack
 ```text
 <package_name>/cdk/
 ├── stack_ctx_enum.py, stack_enum.py   # the two enums of stacks
-├── mise_tasks.py                      # generates the cdk mise tasks
+├── mise_tasks.py                      # generates the per-environment mise tasks
 └── stacks/
     ├── <x>_stack.py                   # a small stack, one file
     ├── <x>_stack_exports.py           # its outputs, for other projects
@@ -21,7 +21,7 @@ description: "Where CDK code lives: everything in <package_name>/cdk/, one stack
         └── stack_02_<topic>.py
 ```
 
-Seed repo: [`infra_stack.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/infra_stack.py), [`lbd_stack.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/lbd_stack.py), both in the one-file form. Switch a stack to the folder form when its file gets long.
+Seed repo: [`infra_stack.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/infra_stack.py), [`lbd_stack.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/cdk/stacks/lbd_stack.py), both in the one-file form. Switch a stack to the folder form when its file gets long.
 
 ---
 
@@ -36,4 +36,4 @@ Seed repo: [`infra_stack.py`](https://github.com/MacHu-GWU/cookiecutter_internal
 
 ## 3. The thin `cdk/` folder at the root
 
-Only `cdk.json` (`"app": "../.venv/bin/python cdk_app.py"`) and [`cdk_app.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cdk/cdk_app.py), whose body is `one.stack_enum.synth()`. The app holds the stacks of the current environment only (`03-env.md`), so `ENV_NAME=prd cdk synth` synthesizes prd and never needs another environment's config. Never put stack logic here.
+Only `cdk.json` (`"app": "../.venv/bin/python cdk_app.py"`) and [`cdk_app.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cdk/cdk_app.py), whose body is `one.stack_enum.synth()`. The app holds the stacks of the current environment only (`03-env.md`), so `ENV_NAME=prd cdk synth` synthesizes prd and never needs another environment's config. Never put stack logic here.

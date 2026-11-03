@@ -67,7 +67,7 @@ Undo section 1, then deploy every environment with the user's yes: the function 
 
 ## 8. Checks after any change
 
-1. `mise run cdk-gen-tasks`, if the stacks or environments changed.
+1. `mise run gen-env-tasks`, if the stacks or environments changed.
 2. `mise run gen-quick-links`, if the config or a URL property changed (`05-config-names.md`).
 3. `mise run cov`, then `mise run format` and `mise run lint`.
 4. `mise run cdk-synth-<env>-all` for one environment.

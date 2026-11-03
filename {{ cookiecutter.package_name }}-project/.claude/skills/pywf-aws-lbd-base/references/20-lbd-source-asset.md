@@ -4,7 +4,7 @@ description: "How the function code ships: mise run lambda-source-build copies a
 
 # Lambda Source Asset
 
-Seed repo: [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py) (`build_lambda_source`), [`constants.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/constants.py), [the tests](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/tests/one/test_one_one_03_devops.py).
+Seed repo: [`one/one_03_devops.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/one/one_03_devops.py) (`build_lambda_source`), [`constants.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/constants.py), [the tests](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/tests/one/test_one_one_03_devops.py).
 
 ---
 

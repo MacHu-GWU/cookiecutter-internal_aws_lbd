@@ -4,7 +4,7 @@ description: "The Config model: the single source of truth for the settings of o
 
 # Config Model
 
-Seed repo: [`config/config_00_main.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/config/config_00_main.py).
+Seed repo: [`config/config_00_main.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/config/config_00_main.py).
 
 ---
 

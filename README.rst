@@ -45,11 +45,11 @@ To use a specific released version (see the `full list of releases <https://gith
 
     cookiecutter https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd --checkout tags/${version}
 
-For example, to use ``1.0.0``, the latest version:
+For example, to use ``1.1.0``, the latest version:
 
 .. code-block:: bash
 
-    cookiecutter https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd --checkout tags/1.0.0
+    cookiecutter https://github.com/MacHu-GWU/cookiecutter-internal_aws_lbd --checkout tags/1.1.0
 
 You'll then be prompted to provide the following information (defaults in parentheses):
 

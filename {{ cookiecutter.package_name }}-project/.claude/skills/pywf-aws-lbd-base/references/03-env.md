@@ -4,7 +4,7 @@ description: "The environment: which deployment environment (dev, tst, prd) the 
 
 # Environment
 
-Seed repo: [`env.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/env.py).
+Seed repo: [`env.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/env.py).
 
 ---
 

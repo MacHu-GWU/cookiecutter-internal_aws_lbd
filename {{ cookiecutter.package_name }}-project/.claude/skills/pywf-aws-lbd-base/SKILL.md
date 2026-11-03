@@ -1,13 +1,13 @@
 ---
 name: pywf-aws-lbd-base
-description: "Conventions of the pywf AWS Lambda project template (v1.0.0), one topic per reference: runtime, environment, the config model, names, and loading, the boto session, the one singleton; then the Lambda code (handlers, dependencies, tests), the devops environment, the config in SSM; the CDK part (layout, StackCtxEnum / StackEnum, stack exports, generated mise tasks, synth-only tests, change recipes); and shipping (source asset, layer, stacks, deploy flow, Lambda change recipes). Load it before changing a Lambda function, a dependency, config, credentials, a stack, a mise task, or a test in such a project, before deploying, or for a question about how it is organized."
+description: "Conventions of the pywf AWS Lambda project template (v1.1.0), one topic per reference: runtime, environment, the config model, names, and loading, the boto session, the one singleton; then the Lambda code (handlers, dependencies, tests), the devops environment, the config in SSM; the CDK part (layout, StackCtxEnum / StackEnum, stack exports, generated mise tasks, synth-only tests, change recipes); and shipping (source asset, layer, stacks, deploy flow, Lambda change recipes). Load it before changing a Lambda function, a dependency, config, credentials, a stack, a mise task, or a test in such a project, before deploying, or for a question about how it is organized."
 ---
 
 The conventions of a multi-environment AWS Lambda project generated from the pywf AWS Lambda template, which extends the pywf AWS CDK template. A generated project already follows all of them; this skill says what they are, so changes keep them.
 
 ## Version
 
-Template **1.0.0**, the `version` in the seed repo's `pyproject.toml`. Every link points to the git tag of that version: [MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project at 1.0.0](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/tree/1.0.0). If the project in front of you differs from the linked files, the project wins; tell the user.
+Template **1.1.0**, the `version` in the seed repo's `pyproject.toml`. Every link points to the git tag of that version: [MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project at 1.1.0](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/tree/1.1.0). If the project in front of you differs from the linked files, the project wins; tell the user.
 
 ## Precedence
 

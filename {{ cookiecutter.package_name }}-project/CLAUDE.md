@@ -18,7 +18,7 @@ Run everything through `mise run <task>`, never the underlying tool. `mise tasks
 | `format`, `lint`, `cov` | run all three after every change; keep the coverage |
 | `cdk-synth-<env>-all`, `cdk-plan-<env>-all` | check the stacks |
 | `lambda-layer-build-only`, `lambda-layer-check-<env>` | check the layer |
-| `cdk-gen-tasks` | after changing `cdk/mise_tasks.py`, the stacks, or the environments; it rewrites the `<cdk-stack-tasks>` block of `mise.toml` |
+| `gen-env-tasks` | after changing `cdk/mise_tasks.py`, the stacks, or the environments; it rewrites the `<env-tasks>` block of `mise.toml` |
 | `gen-quick-links` | after changing the config or a URL property; it rewrites `QUICK_LINKS.md` |
 | `build-doc` | build the docs; CI deploys them to Cloudflare Pages on a push to the `doc` branch |
 

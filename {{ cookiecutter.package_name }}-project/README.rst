@@ -126,7 +126,7 @@ Common Tasks
       - build the docs / deploy them to Cloudflare Pages; normally CI deploys them on ``git push origin main:doc``
     * - ``gen-quick-links``
       - regenerate ``QUICK_LINKS.md`` from the config
-    * - ``cdk-gen-tasks``
+    * - ``gen-env-tasks``
       - regenerate the per-environment tasks in ``mise.toml`` after adding a stack or an environment
 
 

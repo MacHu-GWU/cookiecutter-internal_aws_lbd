@@ -15,7 +15,7 @@ Finish every recipe with section 6.
 3. An entry `<x>` in both enums, after the stacks it depends on (`15-cdk-stack-enums.md`).
 4. If it has outputs: `stacks/<x>_stack_exports.py` and its `tests_int/` test (`16-cdk-stack-exports.md`).
 5. `tests/cdk/stacks/test_cdk_stacks_<x>_stack.py`, and the expected lists in the enum tests (`18-cdk-tests.md`).
-6. `mise run cdk-gen-tasks` (`17-cdk-mise-tasks.md`).
+6. `mise run gen-env-tasks` (`17-cdk-mise-tasks.md`).
 
 ---
 
@@ -35,19 +35,19 @@ Add the resource as a named `__init__` argument of `<b>`, pass `self.<a>.<attr>`
 
 ## 4. Add an environment `<env>`
 
-The general steps are in `03-env.md`. For CDK, also add `<env>` to `STACK_NAMES` in every `*_stack_exports.py`, then run `mise run cdk-gen-tasks`. Deploy to it with the user's yes. Before its first `up`, the Lambda functions need the new account to have access to the layer: run `mise run lambda-layer-deploy`, which grants every workload environment.
+The general steps are in `03-env.md`. For CDK, also add `<env>` to `STACK_NAMES` in every `*_stack_exports.py`, then run `mise run gen-env-tasks`. Deploy to it with the user's yes. Before its first `up`, the Lambda functions need the new account to have access to the layer: run `mise run lambda-layer-deploy`, which grants every workload environment.
 
 ---
 
 ## 5. Remove a stack `<x>`
 
-Destroy it in every environment first, `cdk-down-<env>-<x>-stack`, with the user's yes for each environment. Then undo section 1 and run `mise run cdk-gen-tasks`.
+Destroy it in every environment first, `cdk-down-<env>-<x>-stack`, with the user's yes for each environment. Then undo section 1 and run `mise run gen-env-tasks`.
 
 ---
 
 ## 6. Checks after any change
 
-1. `mise run cdk-gen-tasks`, if the stacks or the environments changed.
+1. `mise run gen-env-tasks`, if the stacks or the environments changed.
 2. `mise run gen-quick-links`, if a config name or URL changed (`05-config-names.md`).
 3. `mise run cdk-synth-<env>-all` for one environment.
 4. `mise run cov`, then `mise run format` and `mise run lint`.

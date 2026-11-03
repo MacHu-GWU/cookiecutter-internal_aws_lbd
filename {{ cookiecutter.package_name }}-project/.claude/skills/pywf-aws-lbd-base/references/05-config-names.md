@@ -4,7 +4,7 @@ description: "Resource names, ARNs, and console URLs are computed once, as prope
 
 # Names in the Config
 
-Seed repo: [`config/config_01_name.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/cookiecutter_internal_aws_lbd_demo/config/config_01_name.py).
+Seed repo: [`config/config_01_name.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/cookiecutter_internal_aws_lbd_demo/config/config_01_name.py).
 
 ---
 
@@ -37,4 +37,4 @@ Group the properties by resource type, under a `# ---` banner comment per type. 
 - It holds no account ID: no ARN, and no URL with the account ID in it, such as the bootstrap bucket of the deployment tool.
 - Run the task after adding, removing, or renaming a resource; nothing checks the file automatically.
 
-Seed repo: [`gen-quick-links.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/.mise/tasks/gen-quick-links.py), [`QUICK_LINKS.md`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.0.0/QUICK_LINKS.md).
+Seed repo: [`gen-quick-links.py`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/.mise/tasks/gen-quick-links.py), [`QUICK_LINKS.md`](https://github.com/MacHu-GWU/cookiecutter_internal_aws_lbd_demo-project/blob/1.1.0/QUICK_LINKS.md).
